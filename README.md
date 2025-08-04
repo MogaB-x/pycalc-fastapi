@@ -1,6 +1,6 @@
 # FastAPI Math Microservice
 
-A production-ready microservice built with **FastAPI** that provides mathematical operations over a secured API. The service includes user registration, JWT-based authentication, role-based access control, request caching with Redis, and per-user operation history stored in a **SQLite** database.
+A python microservice built with **FastAPI** that provides mathematical operations over a secured API. The service includes user registration, JWT-based authentication, role-based access control, request caching with Redis, and per-user operation history stored in a **SQLite** database.
 
 ## Features
 
