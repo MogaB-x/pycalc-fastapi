@@ -1,3 +1,5 @@
+from datetime import datetime
+from streaming.kafka_consumer import stats
 from fastapi import APIRouter, Depends, HTTPException
 from models.pycalc_models import MathResult
 from routers.auth_router import verify_token
@@ -6,6 +8,7 @@ from db.db_repository import insert_operation
 from cache.redis_cache import get_cached_result, set_cached_result
 import time
 
+from streaming.kafka_producer import send_message
 
 router = APIRouter()
 
@@ -38,6 +41,15 @@ async def get_fibonacci(
 
     end = time.perf_counter()
     print(f"Fibonacci calculation took {end - start:.4f} seconds")
+
+    await send_message("operation_stream", {
+        "operation": "fibonacci",
+        "input": str(n),
+        "result": result,
+        "timestamp": datetime.utcnow().isoformat(),
+        "user": current_user
+    })
+
     return MathResult(operation="fibonacci", input=n, result=result)
 
 
@@ -56,6 +68,13 @@ async def get_factorial(
     cached_result = await get_cached_result(f"factorial:{n}")
     if cached_result:
         print(f"Cache hit for factorial({n})")
+        await send_message("operation_stream", {
+            "operation": "factorial",
+            "input": str(n),
+            "result": cached_result,
+            "timestamp": datetime.utcnow().isoformat(),
+            "user": current_user
+        })
         return MathResult(operation="factorial", input=n, result=int(cached_result))
 
     # If not cached, perform the calculation
@@ -69,6 +88,15 @@ async def get_factorial(
     await insert_operation("factorial", str(n), str(result), current_user)
 
     end = time.perf_counter()
+
+    await send_message("operation_stream", {
+        "operation": "factorial",
+        "input": str(n),
+        "result": result,
+        "timestamp": datetime.utcnow().isoformat(),
+        "user": current_user
+    })
+
     print(f"Factorial calculation took {end - start:.4f} seconds")
     return MathResult(operation="factorial", input=n, result=result)
 
@@ -102,6 +130,15 @@ async def get_power(
 
     end = time.perf_counter()
     print(f"Power calculation took {end - start:.4f} seconds")
+
+    await send_message("operation_stream", {
+        "operation": "power",
+        "input": input_data,
+        "result": result,
+        "timestamp": datetime.utcnow().isoformat(),
+        "user": current_user
+    })
+
     return MathResult(
         operation="power",
         input={"base": x, "exponent": y},
