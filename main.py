@@ -35,17 +35,7 @@ async def read_kafka_messages():
 
 @app.get("/")
 def home():
-    return """
-    <html>
-        <head>
-            <title>PyCalc Cloud App</title>
-        </head>
-        <body style="font-family: Arial; text-align: center; padding-top: 50px;">
-            <h1>Hello from <span style="color: #4285F4;">Google Cloud Run</span>!</h1>
-            <p>See the <a href="/docs">Swagger docs</a> to explore the API.</p>
-        </body>
-    </html>
-    """
+    return {"message":"Welcome to my PyCalc app!"}
 
 
 instrumentator = Instrumentator()
