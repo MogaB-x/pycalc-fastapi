@@ -15,6 +15,15 @@ TOKEN_EXPIRE_MINUTES = 60
 
 @router.post("/register")
 async def register(user: UserRegister):
+    """
+    Register a new user account.
+
+    - **Request Body**: JSON with `username`, `password`, `confirm_password`, `email`, and optional `role` ("user" or "admin")
+    - **Validations**: Checks if the username is already taken; hashes password with bcrypt
+    - **Returns**: JSON message confirming successful registration
+    - **Raises**: 400 if username already exists or passwords don't match
+    """
+
     db = await get_db()
     cursor = await db.execute(
         "SELECT * FROM users WHERE username=?", (user.username,)
@@ -44,6 +53,15 @@ async def register(user: UserRegister):
 
 @router.post("/login")
 async def login(user: UserLogin):
+    """
+    Authenticate a user and return a JWT access token.
+
+    - **Request Body**: JSON with `username` and `password`
+    - **Returns**: `access_token` (JWT) and `token_type`
+    - **Token Expiration**: 60 minutes (configurable)
+    - **Raises**: 401 if credentials are invalid
+    """
+
     db = await get_db()
     cursor = await db.execute(
         "SELECT password FROM users WHERE username=? ", (user.username,)
@@ -96,6 +114,15 @@ def verify_token(
 
 @router.get("/secure-history")
 async def get_secure_history(current_user: str = Depends(verify_token)):
+    """
+    Get operation history for the authenticated user.
+
+    - **Access**:
+        - Admins: see all operations from all users
+        - Normal users: see only their own operations
+    - **Returns**: JSON with user, role, and list of operations (input, result, timestamp)
+    - **Requires**: JWT Bearer Token
+    """
     db = await get_db()
 
     # Verify the user role and fetch operations
@@ -130,6 +157,16 @@ async def delete_user(
         username: str,
         current_user: str = Depends(verify_token)
 ):
+    """
+    Delete a user from the system. **Admin only.**
+
+    - **Path Parameter**: `username` to be deleted
+    - **Requires**: JWT token from a user with role `admin`
+    - **Returns**: Confirmation message on success
+    - **Raises**:
+        - 403 if current user is not an admin
+        - 404 if target user not found
+    """
     db = await get_db()
     cursor = await db.execute(
         "SELECT role FROM users WHERE username=?",

@@ -10,8 +10,11 @@ redis_client = redis.Redis(
 
 
 async def get_cached_result(key: str):
-    return await redis_client.get(key)
+    result = await redis_client.get(key)
+    print(f"GET cache: {key} -> {result}")
+    return result
 
 
 async def set_cached_result(key: str, value: str, expire: int = 600):
     await redis_client.set(key, value, ex=expire)
+    print(f"SET cache: {key} -> {value} (expire={expire})")

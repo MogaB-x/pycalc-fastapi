@@ -1,94 +1,141 @@
-# FastAPI Math Microservice
+# 🚀 FastAPI Math Microservice – Cloud Version (GCP)
 
-A production-ready microservice built with **FastAPI** that provides mathematical operations over a secured API. The service includes user registration, JWT-based authentication, role-based access control, request caching with Redis, and per-user operation history stored in a **SQLite** database.
+A scalable, production-ready microservice built with **FastAPI**, deployed on **Google Cloud Run**, enhanced with **Redis Memorystore** for caching and **Google Pub/Sub** for message streaming.
+The application runs at: https://pycalc-fastapi-1042924434321.europe-central2.run.app/
+This version includes **all base, optional, and bonus** requirements of the project, re-architected for a cloud-native, serverless environment.
 
-## Features
+---
 
-* REST API with fibonacci, factorial, and power operations
-* Asynchronous endpoints using async def
-* SQLite persistence of all API requests
-* In-memory and Redis-based caching to prevent recalculations
-* User registration with **bcrypt** password hashing
-* JWT authentication via python-jose
-* Role system: user (personal history), admin (full history)
-* Protected endpoints with Bearer <token> authorization
-* Test suite with pytest and httpx.AsyncClient
-* Prometheus integration at /metrics for monitoring
-* Docker support via Dockerfile and docker-compose
-* Linted with flake8 and structured using MVCS best practices
+## ✅ Features
 
-## Project Structure
+* 🧲 Endpoints for `fibonacci`, `factorial`, and `power`
+* 🔐 JWT authentication with `bcrypt` password hashing
+* 👥 Role-based access control (`user` and `admin`)
+* 📎 Operation history stored in SQLite
+* ⚡ Redis Memorystore caching (GCP-managed Redis)
+* ↻ Google Pub/Sub for operation event streaming
+* 📊 Prometheus metrics at `/metrics`
+* 🧪 Full testing suite with `pytest`
+* 🧹 Code linted with `flake8`
+* ⚙️ Asynchronous endpoints (`async def`)
+* 📆 Packaged as Docker container and deployed to **Cloud Run**
+
+---
+
+## 💂 Project Structure
 
 ```
 pycalc/
-├── main.py                   # FastAPI app with lifespan + Prometheus
-├── routers/                  # math_router.py, auth_router.py
-├── services/                 # MathService with OOP logic
-├── db/                       # SQLite connection and operations
-├── models/                   # Pydantic models (input/output validation)
-├── cache/                    # Redis cache integration
-├── tests/                    # Automated tests with JWT flow
-├── requirements.txt          # Installed dependencies
-├── Dockerfile                # Docker image for the app
-├── docker-compose.yml        # Runs app + Redis together
-└── README.md
+├── main.py                 # App entry + lifespan + metrics
+├── routers/                # API routes: auth + math ops
+├── services/               # MathService logic
+├── db/                     # SQLite integration
+├── models/                 # Pydantic schemas
+├── cache/                  # Redis (Memorystore) client
+├── streaming/              # Pub/Sub producer & consumer
+├── requirements.txt        # Dependencies
+├── Dockerfile              # For Cloud Run
+├── .gcloudignore           # Excludes unnecessary files
+└── README.md               # You're here
 ```
 
-## How to Run
+---
 
-### Local (venv)
+## ☁️ Google Cloud Components
 
-```bash
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
+* **Cloud Run** – Deploys the FastAPI app serverlessly
+* **Pub/Sub** – Streams operation metadata (instead of Kafka)
+* **Memorystore** – Redis-managed caching layer
+* **Cloud Build** – Builds the container image on deploy
+* **VPC Connector** – Enables access to Memorystore from Cloud Run
 
-### With Docker Compose
+---
 
-```bash
-docker compose up --build
-```
+## 🚀 Deployment (Cloud Run)
 
-Access app at: [http://localhost:8000/docs](http://localhost:8000/docs)
+1. **Enable APIs**:
+   Cloud Run, Cloud Build, Pub/Sub, Redis, VPC Access
 
-## API Authentication Flow
+2. **Create Redis (Memorystore)**:
 
-1. `POST /register` – Create user (role = user or admin)
-2. `POST /login` – Receive `access_token`
-3. Use token in:
+3. **Create Pub/Sub Topic + Subscription**:
 
-   ```
-   Authorization: Bearer <access_token>
-   ```
-4. Access protected endpoints:
+4. **Create VPC Connector**:
 
-   * `GET /fibonacci/{n}`
-   * `GET /secure-history` (personal or all if admin)
+5. **Deploy to Cloud Run**:
 
-## Running Tests
+---
+
+## 🔐 Authentication Flow
+
+1. `POST /register` → create user (with role: `user` or `admin`)
+2. `POST /login` → returns `access_token`
+3. Add token in headers:
+   `Authorization: Bearer <access_token>`
+4. Access secured endpoints:
+
+   * `/fibonacci/{n}`
+   * `/factorial/{n}`
+   * `/pow/{x}/{y}`
+   * `/secure-history`
+
+---
+
+## 📊 Monitoring
+
+* Prometheus metrics available at `/metrics`
+* Includes route counters, status code metrics, response times
+
+---
+
+## 🧪 Testing
+
+Run with:
 
 ```bash
 pytest -v -s
 ```
 
-Tests include:
+Test coverage:
 
-* Register + Login
-* Operation calls with token
-* Secure history per user
-* Admin view of full history
-* Token invalidation after user deletion
-* Caching behavior (Redis)
-* Role restrictions and validation
+* Register + login flow
+* Authenticated math operations
+* Role-based access to `/secure-history`
+* Caching via Redis
+* Streaming via Pub/Sub
+* Token invalidation
+* Edge cases
 
-## Monitoring
+---
 
-* Prometheus metrics exposed at `GET /metrics`
-* Includes total request count, per-route stats, and status codes
+## 🧹 Linting
 
-## Notes
+```bash
+flake8 .
+```
 
-* Built using Python 3.13
-* Redis required for caching (run via docker-compose)
-* Fully modular (MVCS): clean separation of logic, routes, DB, models
-* Ready for extension: async workers, token blacklist, external frontend
+## 🧠 Notes
+
+* Built with Python 3.13 + FastAPI
+* Structured using MVCS (Models, Views, Controllers, Services)
+* Fully async and production-ready
+* Easily extendable (e.g., token blacklist, CI/CD, frontend)
+* ✅ Cloud-native stack (Cloud Run, Pub/Sub, Redis)
+
+---
+
+## 🛡️ Branches
+
+| Branch          | Description                            |
+| --------------- | -------------------------------------- |
+| `local-version` | Local development with Kafka & Redis   |
+| `cloud-version` | Deployed on GCP: Pub/Sub + Memorystore |
+
+---
+
+## 📌 Links
+
+* Live Swagger Docs: `https://pycalc-fastapi-1042924434321.europe-central2.run.app/docs`
+* Prometheus metrics: `https://pycalc-fastapi-1042924434321.europe-central2.run.app/metrics`
+
+---
