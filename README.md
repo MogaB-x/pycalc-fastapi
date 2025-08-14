@@ -2,7 +2,7 @@
 
 A scalable, production-ready microservice built with **FastAPI**, deployed on **Google Cloud Run**, enhanced with **Redis Memorystore** for caching and **Google Pub/Sub** for message streaming.
 
-The application runs at: https://pycalc-fastapi-1042924434321.europe-central2.run.app/
+The application runs at: https://pycalc-fastapi-1042924434321.europe-central2.run.app/docs
 
 This version includes **all base, optional, and bonus** requirements of the project, re-architected for a cloud-native, serverless environment.
 
