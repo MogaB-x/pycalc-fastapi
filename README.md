@@ -89,7 +89,7 @@ pycalc/
 
 * Prometheus metrics available at `/metrics`
 * Includes route counters, status code metrics, response times
-
+* `/kafka` endpoint displays recent Pub/Sub messages and shows whether results came from Redis cache (`cached_result`) or were freshly computed (`result`)
 ---
 
 ## 🧪 Testing
