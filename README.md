@@ -1,8 +1,12 @@
 # 🚀 FastAPI Math Microservice – Cloud Version (GCP)
 
 A scalable, production-ready microservice built with **FastAPI**, deployed on **Google Cloud Run**, enhanced with **Redis Memorystore** for caching and **Google Pub/Sub** for message streaming.
+
 The application runs at: https://pycalc-fastapi-1042924434321.europe-central2.run.app/
+
 This version includes **all base, optional, and bonus** requirements of the project, re-architected for a cloud-native, serverless environment.
+
+This project has also a local-version branch in which the application is built with **Kafka** and **Redis** for local development and testing.
 
 ---
 
@@ -13,7 +17,7 @@ This version includes **all base, optional, and bonus** requirements of the proj
 * 👥 Role-based access control (`user` and `admin`)
 * 📎 Operation history stored in SQLite
 * ⚡ Redis Memorystore caching (GCP-managed Redis)
-* ↻ Google Pub/Sub for operation event streaming
+* ↻ Google Pub/Sub for operation event streaming (instead of Kafka)
 * 📊 Prometheus metrics at `/metrics`
 * 🧪 Full testing suite with `pytest`
 * 🧹 Code linted with `flake8`
@@ -22,7 +26,7 @@ This version includes **all base, optional, and bonus** requirements of the proj
 
 ---
 
-## 💂 Project Structure
+## Project Structure
 
 ```
 pycalc/
